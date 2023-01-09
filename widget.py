@@ -1,32 +1,63 @@
 import os
 import shutil
-from PySide6.QtCore import Qt, QProcess
-from PySide6.QtWidgets import QWidget
-from ui_widget_NHP import Ui_Widget_NHP
+from PySide6.QtCore import Qt, QProcess, QUrl
+from PySide6.QtWidgets import QWidget, QFileDialog
+from ui_widget_NHP import Ui_widget_NHP
 
 
-class Widget_NHP(QWidget, Ui_Widget_NHP):
+class Widget_NHP(QWidget, Ui_widget_NHP):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.setWindowTitle('Noordhoek Pathfinder - unofficial app')
-        self.pushButton_copyUKcrewlist.clicked.connect(self.copy_crewlist)
+
+        # NL port docs associated buttons:
+        self.pushButton_arrivalNL.clicked.connect(lambda: self.copy_crewlist(
+            r"NHP_apps/NL ports crewlist project/vessel_format_crewlist/arrival"))
+        self.pushButton_departureNL.clicked.connect(lambda: self.copy_crewlist(
+            r"NHP_apps/NL ports crewlist project/vessel_format_crewlist/departure"))
+        self.pushButton_createNL.clicked.connect(self.create_nl_crewlist)
+
+        # UK port docs associated buttons:
+        self.pushButton_copyUKcrewlist.clicked.connect(lambda: self.copy_crewlist(
+            r"NHP_apps\UK ports crewlist project\current crewlist"))
         self.pushButton_createUKcrewlist.clicked.connect(self.create_uk_crewlist)
         self.process = QProcess()
-        self.process.finished.connect(self.uk_crewlist_finished)
+        self.process.finished.connect(self.process_finished)
 
-    def copy_crewlist(self):
-        current_location = os.getcwd()
-        destination_subfolder = r'Noordhoek-Pathfinder\UK ports crewlist project\current crewlist'
-        destination_directory = os.path.join(current_location, destination_subfolder)
-        for root, dirs, files in os.walk(destination_directory):
-            for f in files:
-                os.unlink(os.path.join(root, f))
-        crewlist_to_convert = self.lineEdit_UKcrewlist.text()
-        shutil.copy(crewlist_to_convert, destination_directory)
+    def copy_crewlist(self, destination_folder):
+        destination_directory = os.path.join(os.getcwd(), destination_folder)
+        shutil.rmtree(destination_directory, ignore_errors=True)
+        os.makedirs(destination_directory, exist_ok=True)
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        file_url, _ = QFileDialog.getOpenFileUrl(self, "Select file to copy", QUrl(),
+                                                 "All Files (*);;Excel Files (*.xlsx)", options=options)
+        if not file_url.isValid():
+            # User cancelled the file selection dialog
+            return
+        file_path = file_url.toLocalFile()
+        shutil.copy(file_path, destination_directory)
 
     def create_uk_crewlist(self):
-        self.process.start("python", [r"C:\Users\wojte\Desktop\python_projects\Noordhoek_Pathfinder\Noordhoek-Pathfinder\UK ports crewlist project/main.py"])
+        self.process.start("python", [r"NHP_apps\UK ports crewlist project\main.py"])
 
-    def uk_crewlist_finished(self):
-        print('Creation of UK crewlist successful!')
+    def create_nl_crewlist(self):
+        self.process.execute("python", [r"C:\Users\wojte\Desktop\python_projects\Noordhoek_Pathfinder\NHP_apps\NL ports crewlist project\main.py"])
+        # if self.process.errorOccurred():
+        #     print(self.process.errorString())
+        self.process.waitForStarted()
+        print('start nl crewlist')
+        self.process.waitForFinished()
+        print('finished nl crewlist')
+        print(self.process.exitStatus())
+    # def handle_error(self):
+    #     error = self.process.error()
+    #     error_string = self.process.errorString()
+    #     print(f'An error occurred: {error} - {error_string}')
+
+    def process_finished(self):
+        if self.process.exitStatus() != QProcess.NormalExit:
+            print(f'An error occurred while running the script. {self.process.exitStatus}')
+        else:
+            print('Job done. Time to relax...')
