@@ -173,7 +173,7 @@ class Ui_widget_NHP(object):
         self.pushButton_departureNL.setText(QCoreApplication.translate("widget_NHP", u"Departure crew list", None))
         self.pushButton_createNL.setText(QCoreApplication.translate("widget_NHP", u"Create a NL crew list", None))
         self.pushButton_infoNL.setText(QCoreApplication.translate("widget_NHP", u"Instruction", None))
-        self.label_resthours_and_timesheets.setText(QCoreApplication.translate("widget_NHP", u"Resthours and timesheets:", None))
+        self.label_resthours_and_timesheets.setText(QCoreApplication.translate("widget_NHP", u"resthours and timesheets:", None))
         self.pushButton_generate_resthours.setText(QCoreApplication.translate("widget_NHP", u"Generate sheets", None))
         self.pushButton_info_resthours.setText(QCoreApplication.translate("widget_NHP", u"Instruction", None))
     # retranslateUi

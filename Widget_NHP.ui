@@ -205,7 +205,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Resthours and timesheets:</string>
+         <string>resthours and timesheets:</string>
         </property>
        </widget>
       </item>

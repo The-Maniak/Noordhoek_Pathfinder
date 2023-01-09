@@ -13,14 +13,15 @@ class Widget_NHP(QWidget, Ui_widget_NHP):
 
         # NL port docs associated buttons:
         self.pushButton_arrivalNL.clicked.connect(lambda: self.copy_crewlist(
-            r"NHP_apps/NL ports crewlist project/vessel_format_crewlist/arrival"))
+            r"NHP_apps\nl_ports_crewlist_project\vessel-format-crewlist\arrival"))
+
         self.pushButton_departureNL.clicked.connect(lambda: self.copy_crewlist(
-            r"NHP_apps/NL ports crewlist project/vessel_format_crewlist/departure"))
+            r"NHP_apps\nl_ports_crewlist_project\vessel-format-crewlist\departure"))
         self.pushButton_createNL.clicked.connect(self.create_nl_crewlist)
 
         # UK port docs associated buttons:
         self.pushButton_copyUKcrewlist.clicked.connect(lambda: self.copy_crewlist(
-            r"NHP_apps\UK ports crewlist project\current crewlist"))
+            r"NHP_apps\uk_ports_crewlist_project\current-crewlist"))
         self.pushButton_createUKcrewlist.clicked.connect(self.create_uk_crewlist)
         self.process = QProcess()
         self.process.finished.connect(self.process_finished)
@@ -40,10 +41,12 @@ class Widget_NHP(QWidget, Ui_widget_NHP):
         shutil.copy(file_path, destination_directory)
 
     def create_uk_crewlist(self):
-        self.process.start("python", [r"NHP_apps\UK ports crewlist project\main.py"])
+        self.process.start("python",
+                           [r"C:\Users\wojte\Desktop\python_projects\Noordhoek_Pathfinder\NHP_apps\uk_ports_crewlist_project\main.py"])
 
     def create_nl_crewlist(self):
-        self.process.execute("python", [r"C:\Users\wojte\Desktop\python_projects\Noordhoek_Pathfinder\NHP_apps\NL ports crewlist project\main.py"])
+        self.process.execute("python",
+                             [r"C:\Users\wojte\Desktop\python_projects\Noordhoek_Pathfinder\NHP_apps\nl_ports_crewlist_project\main.py"])
         # if self.process.errorOccurred():
         #     print(self.process.errorString())
         self.process.waitForStarted()
